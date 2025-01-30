@@ -6,13 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import userRequire from "@/app/lib/hooks";
 import { prisma } from "@/app/lib/prisma";
 import { CalendarX2, Clock, VideoIcon } from "lucide-react";
 import { notFound } from "next/navigation";
+import userRequire from "@/app/lib/hooks";
 
 async function getData(username: string, eventName: string) {
-  const session = await userRequire();
+  const session = userRequire();
   const eventType = await prisma.eventType.findFirst({
     where: {
       url: eventName,
@@ -50,12 +50,21 @@ async function getData(username: string, eventName: string) {
   return eventType;
 }
 
+interface PageParams {
+  username: string;
+  eventUrl: string;
+}
+
+interface SearchParams {
+  date?: string;
+  time?: string;
+}
 export default async function BookingFormRoute({
   params,
   searchParams,
 }: {
-  params: { username: string; eventUrl: string };
-  searchParams: { date?: string; time?: string };
+  params: PageParams;
+  searchParams: SearchParams;
 }) {
   const selectedDate = searchParams.date
     ? new Date(searchParams.date)
@@ -113,16 +122,11 @@ export default async function BookingFormRoute({
               action={CreateMeetingAction}
               className="flex flex-col gap-y-4"
             >
+              <input type="hidden" name="eventTypeId" value={data.id} />
+              <input type="hidden" name="username" value={params.username} />
               <input type="hidden" name="fromTime" value={searchParams.time} />
               <input type="hidden" name="eventDate" value={searchParams.date} />
               <input type="hidden" name="meetingLength" value={data.duration} />
-              <input
-                type="hidden"
-                name="provider"
-                value={data.VideoCallSoftware}
-              />
-              <input type="hidden" name="username" value={params.username} />
-              <input type="hidden" name="eventTypeId" value={data.id} />
               <div className="flex flex-col gap-y-2">
                 <Label>Your Name</Label>
                 <Input name="name" placeholder="Your Name" />
