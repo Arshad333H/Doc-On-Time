@@ -1,23 +1,23 @@
 import { CreateMeetingAction } from "@/app/action";
 import { RenderCalender } from "@/app/components/BookingForm/RenderCalendar";
-import { TimeTable } from "@/app/components/BookingForm/TimeTable";
 import { SubmitButton } from "@/app/components/SubmitButton";
-import userRequire from "@/app/lib/hooks";
-import { prisma } from "@/app/lib/prisma";
+import { TimeTable } from "@/app/components/BookingForm/TimeTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import userRequire from "@/app/lib/hooks";
+import { prisma } from "@/app/lib/prisma";
 import { CalendarX2, Clock, VideoIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 
-async function getData(eventUrl: string, userName: string) {
+async function getData(username: string, eventName: string) {
   const session = await userRequire();
-  const data = await prisma.eventType.findFirst({
+  const eventType = await prisma.eventType.findFirst({
     where: {
-      url: eventUrl,
+      url: eventName,
       User: {
-        userName: userName,
+        userName: username,
       },
       active: true,
     },
@@ -27,6 +27,7 @@ async function getData(eventUrl: string, userName: string) {
       title: true,
       duration: true,
       VideoCallSoftware: true,
+
       User: {
         select: {
           image: true,
@@ -41,10 +42,12 @@ async function getData(eventUrl: string, userName: string) {
       },
     },
   });
-  if (!data) {
+
+  if (!eventType) {
     return notFound();
   }
-  return data;
+
+  return eventType;
 }
 
 export default async function BookingFormRoute({
