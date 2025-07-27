@@ -1,7 +1,6 @@
-import EvnetTypeForm from "@/app/components/EvnetTypeForm";
-import { prisma } from "@/app/lib/prisma";
-import { notFound } from "next/navigation";
-import React from "react";
+import EvnetTypeForm from "@/app/components/EvnetTypeForm"
+import { prisma } from "@/app/lib/prisma"
+import { notFound } from "next/navigation"
 
 async function getData(eventTypeId: string) {
   const data = await prisma.eventType.findUnique({
@@ -16,20 +15,24 @@ async function getData(eventTypeId: string) {
       id: true,
       VideoCallSoftware: true,
     },
-  });
+  })
 
   if (!data) {
-    return notFound();
+    return notFound()
   }
 
-  return data;
+  return data
 }
+
 const EditEventTypePage = async ({
   params,
 }: {
-  params: { eventTypeId: string };
+  params: Promise<{ eventTypeId: string }>
 }) => {
-  const data = await getData(params.eventTypeId);
+  // Await the params since they're now async
+  const { eventTypeId } = await params
+
+  const data = await getData(eventTypeId)
 
   return (
     <EvnetTypeForm
@@ -41,7 +44,7 @@ const EditEventTypePage = async ({
       id={data.id}
       callProvider={data.VideoCallSoftware}
     />
-  );
-};
+  )
+}
 
-export default EditEventTypePage;
+export default EditEventTypePage

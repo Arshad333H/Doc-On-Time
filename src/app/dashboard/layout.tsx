@@ -74,6 +74,7 @@ export default async function DashBoardLayout({
                   className="md:hidden shrink-0"
                   size="icon"
                   variant="outline"
+                  asChild
                 >
                   <Menu className="size-5" />
                 </Button>

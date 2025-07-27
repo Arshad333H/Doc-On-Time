@@ -19,7 +19,7 @@ interface AppProps {
 function AuthModel({ text }: AppProps) {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button>{text}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[360px] ">
